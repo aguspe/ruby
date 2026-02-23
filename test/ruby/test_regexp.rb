@@ -952,6 +952,12 @@ class TestRegexp < Test::Unit::TestCase
     bug13034 = '[ruby-core:78646] [Bug #13034]'
     str = "\x00".force_encoding("UTF-16BE")
     assert_equal(str, Regexp.quote(str), bug13034)
+
+    utf8_no_meta = "foo".encode("UTF-8")
+    assert_equal(Encoding::UTF_8, Regexp.quote(utf8_no_meta).encoding)
+
+    utf8_with_meta = "foo.bar".encode("UTF-8")
+    assert_equal(Encoding::UTF_8, Regexp.quote(utf8_with_meta).encoding)
   end
 
   def test_try_convert

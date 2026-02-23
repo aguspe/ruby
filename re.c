@@ -4110,7 +4110,6 @@ rb_reg_quote(VALUE str)
     char *s, *send, *t;
     VALUE tmp;
     int c, clen;
-    int ascii_only = rb_enc_str_asciionly_p(str);
 
     s = RSTRING_PTR(str);
     send = s + RSTRING_LEN(str);
@@ -4131,20 +4130,11 @@ rb_reg_quote(VALUE str)
         }
         s += clen;
     }
-    tmp = rb_str_new3(str);
-    if (ascii_only) {
-        rb_enc_associate(tmp, rb_usascii_encoding());
-    }
-    return tmp;
+    return rb_str_new3(str);
 
   meta_found:
     tmp = rb_str_new(0, RSTRING_LEN(str)*2);
-    if (ascii_only) {
-        rb_enc_associate(tmp, rb_usascii_encoding());
-    }
-    else {
-        rb_enc_copy(tmp, str);
-    }
+    rb_enc_copy(tmp, str);
     t = RSTRING_PTR(tmp);
     /* copy upto metacharacter */
     const char *p = RSTRING_PTR(str);
