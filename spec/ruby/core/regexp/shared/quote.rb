@@ -22,9 +22,18 @@ describe :regexp_quote, shared: true do
     Regexp.send(@method, "a.\x80".dup.force_encoding("UTF-8")).should == "a\\.\x80".dup.force_encoding("UTF-8")
   end
 
-  it "sets the encoding of the result to the encoding of the input String even if only US-ASCII characters are present" do
-    str = "abc".dup.force_encoding("euc-jp")
-    Regexp.send(@method, str).encoding.should == Encoding::EUC_JP
+  ruby_version_is ""..."4.1" do
+    it "sets the encoding of the result to US-ASCII if there are only US-ASCII characters present in the input String" do
+      str = "abc".dup.force_encoding("euc-jp")
+      Regexp.send(@method, str).encoding.should == Encoding::US_ASCII
+    end
+  end
+
+  ruby_version_is "4.1" do
+    it "sets the encoding of the result to the encoding of the input String even if only US-ASCII characters are present" do
+      str = "abc".dup.force_encoding("euc-jp")
+      Regexp.send(@method, str).encoding.should == Encoding::EUC_JP
+    end
   end
 
   it "sets the encoding of the result to the encoding of the String if any non-US-ASCII characters are present in an input String with valid encoding" do
